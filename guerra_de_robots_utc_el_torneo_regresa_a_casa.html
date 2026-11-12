@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Torneo Regresa a Casa | Guerra de Robots - UTC</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron (Futurista/Cyberpunk) & Rajdhani / Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome para iconos tecnológicos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        cyber: ['Orbitron', 'sans-serif'],
+                        tech: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        cyber: {
+                            dark: '#040814',
+                            darker: '#02040a',
+                            card: '#0a1226',
+                            blue: '#00f3ff',
+                            electric: '#0066ff',
+                            purple: '#9d00ff',
+                            pink: '#ff0055',
+                            green: '#00ff88'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'scan': 'scan 3.5s linear infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        scan: {
+                            '0%': { top: '0%', opacity: '0' },
+                            '15%': { opacity: '1' },
+                            '85%': { opacity: '1' },
+                            '100%': { top: '100%', opacity: '0' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 10px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(0, 243, 255, 0.8), inset 0 0 15px rgba(0, 243, 255, 0.4)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos personalizados para estética Cyberpunk, Cuadrícula 3D y Escaneo Neón */
+        body {
+            background-color: #040814;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Fondo de cuadrícula perspectiva cyberpunk */
+        .cyber-grid-bg {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 243, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 243, 255, 0.07) 1px, transparent 1px);
+            position: relative;
+        }
+
+        .cyber-grid-floor {
+            position: absolute;
+            bottom: 0;
+            left: -50%;
+            right: -50%;
+            height: 45vh;
+            background-image: 
+                linear-gradient(to right, rgba(0, 243, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 243, 255, 0.2) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(65deg);
+            transform-origin: bottom center;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 90%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 90%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Línea de escaneo láser en pantalla */
+        .laser-scanner {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f3ff, #ffffff, #00f3ff, transparent);
+            box-shadow: 0 0 15px #00f3ff, 0 0 30px #0066ff;
+            z-index: 50;
+            pointer-events: none;
+            animation: scanScreen 8s linear infinite;
+            opacity: 0.4;
+        }
+
+        @keyframes scanScreen {
+            0% { top: -5%; }
+            100% { top: 105%; }
+        }
+
+        /* Cortes angulares estilo Sci-Fi (Clip-Path) */
+        .cyber-cut {
+            clip-path: polygon(
+                0 15px, 
+                15px 0, 
+                calc(100% - 15px) 0, 
+                100% 15px, 
+                100% calc(100% - 15px), 
+                calc(100% - 15px) 100%, 
+                15px 100%, 
+                0 calc(100% - 15px)
+            );
+        }
+
+        .cyber-btn {
+            clip-path: polygon(
+                12px 0, 
+                100% 0, 
+                100% calc(100% - 12px), 
+                calc(100% - 12px) 100%, 
+                0 100%, 
+                0 12px
+            );
+            transition: all 0.3s ease;
+        }
+
+        .cyber-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
+        }
+
+        /* Efecto de texto neón */
+        .text-neon-blue {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 102, 255, 0.5);
+        }
+
+        .text-neon-pink {
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.7), 0 0 20px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Borde brillante animado para tarjetas */
+        .cyber-card {
+            background: linear-gradient(145deg, rgba(10, 18, 38, 0.9), rgba(4, 8, 20, 0.95));
+            border: 1px solid rgba(0, 243, 255, 0.25);
+            backdrop-filter: blur(10px);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .cyber-card:hover {
+            border-color: #00f3ff;
+            box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.35);
+            transform: translateY(-6px);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0066ff;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+    </style>
+</head>
+<body class="cyber-grid-bg antialiased selection:bg-cyber-blue selection:text-cyber-dark">
+
+    <!-- Línea de Escaneo Neón Ambiental -->
+    <div class="laser-scanner"></div>
+
+    <!-- Barra de Navegación Futurista -->
+    <header class="fixed top-0 w-full z-40 bg-cyber-darker/85 backdrop-blur-md border-b border-cyber-blue/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Identidad UTC -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyber-blue to-cyber-electric p-0.5 shadow-[0_0_15px_rgba(0,243,255,0.5)] group-hover:rotate-12 transition-transform">
+                        <div class="w-full h-full bg-cyber-dark rounded-[6px] flex items-center justify-center">
+                            <i class="fa-solid fa-robot text-cyber-blue text-lg"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-cyber font-bold text-lg tracking-wider text-white block leading-none">GUERRA DE <span class="text-cyber-blue">ROBOTS</span></span>
+                        <span class="font-tech text-xs tracking-[0.25em] text-cyan-400/80 uppercase">Sede Oficial • UTC</span>
+                    </div>
+                </a>
+
+                <!-- Menú Desktop -->
+                <nav class="hidden md:flex items-center space-x-8 font-tech text-lg font-semibold tracking-wide">
+                    <a href="#inicio" class="text-slate-300 hover:text-cyber-blue transition-colors">INICIO</a>
+                    <a href="#categorias" class="text-slate-300 hover:text-cyber-blue transition-colors">CATEGORÍAS</a>
+                    <a href="#app-movil" class="text-slate-300 hover:text-cyber-blue transition-colors">APP COMUNIDAD</a>
+                    <a href="#descarga" class="cyber-btn bg-cyber-blue/15 border border-cyber-blue text-cyber-blue hover:bg-cyber-blue hover:text-cyber-dark px-5 py-2 font-cyber text-sm font-bold tracking-wider flex items-center gap-2">
+                        <i class="fa-brands fa-android"></i> DESCARGAR APK
+                    </a>
+                </nav>
+
+                <!-- Botón Menú Móvil -->
+                <button id="mobile-menu-btn" aria-label="Abrir menú" class="md:hidden text-cyber-blue p-2 rounded-lg border border-cyber-blue/30 hover:bg-cyber-blue/10">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menú Desplegable Móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cyber-dark/95 border-b border-cyber-blue/30 px-4 pt-2 pb-6 space-y-3 font-tech text-lg">
+            <a href="#inicio" class="block py-2 text-slate-200 hover:text-cyber-blue border-b border-slate-800">INICIO</a>
+            <a href="#categorias" class="block py-2 text-slate-200 hover:text-cyber-blue border-b border-slate-800">CATEGORÍAS DE COMBATE</a>
+            <a href="#app-movil" class="block py-2 text-slate-200 hover:text-cyber-blue border-b border-slate-800">APP COMUNIDAD UTC</a>
+            <a href="#descarga" class="block py-3 text-center bg-cyber-blue text-cyber-dark font-cyber font-bold rounded-lg mt-2">
+                <i class="fa-solid fa-download mr-2"></i> DESCARGAR APK OFICIAL
+            </a>
+        </div>
+    </header>
+
+    <!-- SECCIÓN HERO PRINCIPAL -->
+    <section id="inicio" class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+        <!-- Cuadrícula 3D en perspectiva -->
+        <div class="cyber-grid-floor"></div>
+        
+        <!-- Resplandores ambientales -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyber-electric/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyber-blue/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Columna Izquierda: Información del Evento -->
+                <div class="lg:col-span-6 text-center lg:text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyber-blue/10 border border-cyber-blue/40 text-cyber-blue font-tech font-bold text-sm tracking-widest uppercase">
+                        <span class="w-2 h-2 rounded-full bg-cyber-blue animate-ping"></span>
+                        EDICIÓN ESPECIAL • UNIVERSIDAD TECNOLÓGICA
+                    </div>
+
+                    <h1 class="font-cyber font-black text-4xl sm:text-5xl lg:text-6xl text-white leading-tight tracking-tight">
+                        EL TORNEO <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-blue via-cyan-300 to-cyber-electric text-neon-blue">
+                            REGRESA A CASA
+                        </span>
+                    </h1>
+
+                    <p class="font-tech text-xl sm:text-2xl text-cyan-200/90 font-semibold tracking-wide">
+                        TORNEO DE ROBÓTICA • GUERRA DE ROBOTS - UTC
+                    </p>
+
+                    <p class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        La arena vuelve a encenderse. Ingenieros, programadores y constructores se enfrentan en batallas de alto voltaje, algoritmos autónomos y precisión mecánica. Sigue cada combate en tiempo real desde nuestra plataforma oficial.
+                    </p>
+
+                    <!-- Botones de Acción Hero -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#descarga" class="w-full sm:w-auto cyber-btn bg-gradient-to-r from-cyber-blue to-cyber-electric text-cyber-dark font-cyber font-bold text-sm sm:text-base px-8 py-4 flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+                            <i class="fa-brands fa-android text-xl"></i>
+                            <span>DESCARGAR APP (APK)</span>
+                        </a>
+                        <a href="#categorias" class="w-full sm:w-auto cyber-btn bg-cyber-card border border-cyber-blue/50 text-white hover:border-cyber-blue font-cyber font-bold text-sm sm:text-base px-8 py-4 flex items-center justify-center gap-2">
+                            <span>EXPLORAR ARENAS</span>
+                            <i class="fa-solid fa-chevron-right text-cyber-blue"></i>
+                        </a>
+                    </div>
+
+                    <!-- Estadísticas Rápidas -->
+                    <div class="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <div class="font-cyber font-bold text-2xl sm:text-3xl text-cyber-blue">3</div>
+                            <div class="font-tech text-xs sm:text-sm text-slate-400 uppercase tracking-wider">Categorías Élite</div>
+                        </div>
+                        <div>
+                            <div class="font-cyber font-bold text-2xl sm:text-3xl text-white">+64</div>
+                            <div class="font-tech text-xs sm:text-sm text-slate-400 uppercase tracking-wider">Equipos en Arena</div>
+                        </div>
+                        <div>
+                            <div class="font-cyber font-bold text-2xl sm:text-3xl text-cyber-green">LIVE</div>
+                            <div class="font-tech text-xs sm:text-sm text-slate-400 uppercase tracking-wider">Marcadores App</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Emblema / Logo Oficial Integrado (Temática Azul Neón, Circuito y Robot Luchador) -->
+                <div class="lg:col-span-6 flex justify-center">
+                    <div class="relative w-full max-w-md sm:max-w-lg animate-float">
+                        <!-- Marco holográfico contenedor del logo -->
+                        <div class="relative rounded-2xl p-2 bg-gradient-to-b from-cyber-blue/40 via-cyber-electric/20 to-transparent border border-cyber-blue/40 shadow-[0_0_50px_rgba(0,102,255,0.3)] backdrop-blur-sm">
+                            
+                            <!-- Escáner interno del emblema -->
+                            <div class="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+                                <div class="w-full h-1 bg-cyber-blue/80 shadow-[0_0_15px_#00f3ff] absolute animate-scan"></div>
+                            </div>
+
+                            <!-- Emblema Vectorial Alta Definición: Logo "El Torneo Regresa a Casa" con Robot Luchador y Circuitos -->
+                            <div class="bg-cyber-darker rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center relative overflow-hidden">
+                                <!-- SVG Ilustrativo del Logo Oficial del Torneo -->
+                                <svg viewBox="0 0 500 500" class="w-full h-auto drop-shadow-[0_0_18px_rgba(0,243,255,0.65)]" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#00f3ff"/>
+                                            <stop offset="50%" stop-color="#0088ff"/>
+                                            <stop offset="100%" stop-color="#00f3ff"/>
+                                        </linearGradient>
+                                        <linearGradient id="shieldMetal" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#0f2347"/>
+                                            <stop offset="100%" stop-color="#040a18"/>
+                                        </linearGradient>
+                                        <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feGaussianBlur stdDeviation="5" result="blur" />
+                                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                        </filter>
+                                    </defs>
+
+                                    <!-- Anillo Exterior de Circuito -->
+                                    <circle cx="250" cy="240" r="215" fill="none" stroke="#00f3ff" stroke-width="2" stroke-dasharray="18 8 4 8" opacity="0.6"/>
+                                    <circle cx="250" cy="240" r="198" fill="none" stroke="#0066ff" stroke-width="4" opacity="0.8"/>
+
+                                    <!-- Trazas de Circuito Lateral Izquierdo -->
+                                    <path d="M45 200 H85 L105 180 H130" fill="none" stroke="#00f3ff" stroke-width="3" filter="url(#glowFilter)"/>
+                                    <circle cx="45" cy="200" r="5" fill="#00f3ff"/>
+                                    <path d="M35 250 H95 L115 270 H140" fill="none" stroke="#00f3ff" stroke-width="3"/>
+                                    <circle cx="35" cy="250" r="5" fill="#00f3ff"/>
+                                    <path d="M55 300 H105 L120 315" fill="none" stroke="#0088ff" stroke-width="2.5"/>
+                                    <circle cx="55" cy="300" r="4" fill="#0088ff"/>
+
+                                    <!-- Trazas de Circuito Lateral Derecho -->
+                                    <path d="M455 200 H415 L395 180 H370" fill="none" stroke="#00f3ff" stroke-width="3" filter="url(#glowFilter)"/>
+                                    <circle cx="455" cy="200" r="5" fill="#00f3ff"/>
+                                    <path d="M465 250 H405 L385 270 H360" fill="none" stroke="#00f3ff" stroke-width="3"/>
+                                    <circle cx="465" cy="250" r="5" fill="#00f3ff"/>
+                                    <path d="M445 300 H395 L380 315" fill="none" stroke="#0088ff" stroke-width="2.5"/>
+                                    <circle cx="445" cy="300" r="4" fill="#0088ff"/>
+
+                                    <!-- Escudo Hexagonal Central -->
+                                    <polygon points="250,45 405,120 405,310 250,415 95,310 95,120" fill="url(#shieldMetal)" stroke="url(#neonCyan)" stroke-width="5" filter="url(#glowFilter)"/>
+                                    <polygon points="250,62 390,130 390,300 250,398 110,300 110,130" fill="none" stroke="#00f3ff" stroke-width="1.5" opacity="0.5"/>
+
+                                    <!-- Silueta / Busto de Robot Luchador Futurista -->
+                                    <!-- Hombreras Blindadas -->
+                                    <path d="M135 235 L175 190 L210 205 L195 265 L145 265 Z" fill="#0a1936" stroke="#00f3ff" stroke-width="3"/>
+                                    <path d="M365 235 L325 190 L290 205 L305 265 L355 265 Z" fill="#0a1936" stroke="#00f3ff" stroke-width="3"/>
+                                    <!-- Detalles Neón Hombreras -->
+                                    <line x1="155" y1="225" x2="188" y2="210" stroke="#00f3ff" stroke-width="3"/>
+                                    <line x1="345" y1="225" x2="312" y2="210" stroke="#00f3ff" stroke-width="3"/>
+
+                                    <!-- Torso / Núcleo de Energía -->
+                                    <polygon points="195,205 305,205 290,295 210,295" fill="#071329" stroke="#00f3ff" stroke-width="3"/>
+                                    <circle cx="250" cy="250" r="22" fill="#001a33" stroke="#00f3ff" stroke-width="3" filter="url(#glowFilter)"/>
+                                    <circle cx="250" cy="250" r="10" fill="#00f3ff"/>
+
+                                    <!-- Casco / Cabeza del Robot Luchador -->
+                                    <polygon points="210,120 290,120 305,165 280,198 220,198 195,165" fill="#0d2247" stroke="#00f3ff" stroke-width="3.5"/>
+                                    <!-- Antenas / Cresta Táctica -->
+                                    <polygon points="242,92 258,92 264,120 236,120" fill="#00f3ff"/>
+                                    <line x1="202" y1="130" x2="188" y2="102" stroke="#00f3ff" stroke-width="4"/>
+                                    <line x1="298" y1="130" x2="312" y2="102" stroke="#00f3ff" stroke-width="4"/>
+
+                                    <!-- Visor Óptico Neón -->
+                                    <polygon points="212,148 288,148 280,168 220,168" fill="#00f3ff" filter="url(#glowFilter)"/>
+                                    <line x1="250" y1="148" x2="250" y2="168" stroke="#040814" stroke-width="3"/>
+
+                                    <!-- Cinta / Banner Inferior del Emblema -->
+                                    <polygon points="65,320 435,320 415,375 85,375" fill="#040814" stroke="#00f3ff" stroke-width="3.5" filter="url(#glowFilter)"/>
+                                    <text x="250" y="346" font-family="Orbitron, sans-serif" font-weight="900" font-size="20" fill="#ffffff" text-anchor="middle" letter-spacing="2">GUERRA DE ROBOTS</text>
+                                    <text x="250" y="366" font-family="Rajdhani, sans-serif" font-weight="700" font-size="15" fill="#00f3ff" text-anchor="middle" letter-spacing="4">EL TORNEO REGRESA A CASA • UTC</text>
+                                </svg>
+
+                                <!-- Etiqueta de Estado del Sistema -->
+                                <div class="mt-2 flex items-center justify-between w-full px-3 pt-3 border-t border-cyber-blue/20 text-xs font-tech text-cyan-300">
+                                    <span>SYS.ID: UTC-2026-ARENA</span>
+                                    <span class="flex items-center gap-1.5 text-cyber-green">
+                                        <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> ONLINE
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: CATEGORÍAS DE COMBATE -->
+    <section id="categorias" class="py-20 relative border-t border-cyber-blue/20 bg-cyber-darker/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="font-tech text-cyber-blue font-bold tracking-[0.3em] uppercase text-sm">MODALIDADES OFICIALES</span>
+                <h2 class="font-cyber font-bold text-3xl sm:text-4xl lg:text-5xl text-white">
+                    CATEGORÍAS DE <span class="text-cyber-blue text-neon-blue">COMPETENCIA</span>
+                </h2>
+                <p class="text-slate-400 text-base sm:text-lg">
+                    Tres disciplinas diseñadas para poner a prueba la ingeniería mecánica, sensores de alta velocidad e inteligencia artificial de cada equipo participante.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Categoría 1: Combate de Robots -->
+                <div class="cyber-card cyber-cut p-8 relative group">
+                    <div class="w-16 h-16 rounded-xl bg-cyber-blue/10 border border-cyber-blue/40 flex items-center justify-center mb-6 group-hover:bg-cyber-blue group-hover:text-cyber-dark text-cyber-blue transition-colors">
+                        <i class="fa-solid fa-shield-halved text-3xl"></i>
+                    </div>
+                    <div class="font-tech text-xs font-bold text-cyber-pink tracking-widest uppercase mb-1">ARENA DE IMPACTO</div>
+                    <h3 class="font-cyber font-bold text-2xl text-white mb-3">Combate de Robots</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        Enfrentamientos directos cuerpo a cuerpo dentro de la jaula blindada. Los prototipos utilizan armas cinéticas, cuñas y tracción de alto torque para inmovilizar o expulsar a su oponente.
+                    </p>
+                    <ul class="space-y-2 text-xs font-tech text-cyan-200/80 border-t border-slate-800 pt-4">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Categorías Mini-Sumo, 1 lb y 3 lbs</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Control inalámbrico RF / Bluetooth</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Rounds de 3 minutos de alta intensidad</li>
+                    </ul>
+                </div>
+
+                <!-- Categoría 2: Laberintos -->
+                <div class="cyber-card cyber-cut p-8 relative group">
+                    <div class="w-16 h-16 rounded-xl bg-cyber-blue/10 border border-cyber-blue/40 flex items-center justify-center mb-6 group-hover:bg-cyber-blue group-hover:text-cyber-dark text-cyber-blue transition-colors">
+                        <i class="fa-solid fa-microchip text-3xl"></i>
+                    </div>
+                    <div class="font-tech text-xs font-bold text-cyber-blue tracking-widest uppercase mb-1">NAVEGACIÓN AUTÓNOMA</div>
+                    <h3 class="font-cyber font-bold text-2xl text-white mb-3">Laberintos (Micromouse)</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        Robots 100% autónomos equipados con sensores ultrasónicos, LiDAR o infrarrojos que mapean rutas desconocidas en tiempo real para encontrar la salida en el menor tiempo posible.
+                    </p>
+                    <ul class="space-y-2 text-xs font-tech text-cyan-200/80 border-t border-slate-800 pt-4">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Algoritmos Flood-Fill y mapeo dinámico</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Cero intervención humana permitida</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Cronometraje láser de milisegundos</li>
+                    </ul>
+                </div>
+
+                <!-- Categoría 3: Robots Fútbol -->
+                <div class="cyber-card cyber-cut p-8 relative group">
+                    <div class="w-16 h-16 rounded-xl bg-cyber-blue/10 border border-cyber-blue/40 flex items-center justify-center mb-6 group-hover:bg-cyber-blue group-hover:text-cyber-dark text-cyber-blue transition-colors">
+                        <i class="fa-solid fa-futbol text-3xl"></i>
+                    </div>
+                    <div class="font-tech text-xs font-bold text-cyber-green tracking-widest uppercase mb-1">ESTRATEGIA EN EQUIPO</div>
+                    <h3 class="font-cyber font-bold text-2xl text-white mb-3">Robots Fútbol</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                        Partidos dinámicos 2 vs 2 y 3 vs 3 donde la velocidad, coordinación y precisión de disparo definen al campeón de la cancha tecnológica UTC.
+                    </p>
+                    <ul class="space-y-2 text-xs font-tech text-cyan-200/80 border-t border-slate-800 pt-4">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Sistemas de pateo electromecánico</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Tracción omnidireccional y diferencial</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-bolt text-cyber-blue"></i> Fase de grupos y eliminación directa</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN: MOCKUP INTERACTIVO DE LA APP MÓVIL ("Comunidad UTC - Guerra de Robots") -->
+    <section id="app-movil" class="py-24 relative overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute right-0 top-1/3 w-80 h-80 bg-cyber-purple/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Columna Izquierda: Mockup Interactivo de Smartphone -->
+                <div class="lg:col-span-5 flex flex-col items-center">
+                    <div class="relative mx-auto w-[300px] sm:w-[320px] h-[630px] bg-slate-950 rounded-[44px] p-3 border-[4px] border-slate-800 shadow-[0_0_50px_rgba(0,243,255,0.25)] ring-1 ring-cyber-blue/40">
+                        <!-- Altavoz / Cámara Frontal (Notch) -->
+                        <div class="absolute top-0 inset-x-0 h-6 flex justify-center z-20">
+                            <div class="w-32 h-5 bg-slate-950 rounded-b-2xl flex items-center justify-center gap-2 border-b border-x border-slate-800">
+                                <span class="w-8 h-1 bg-slate-800 rounded-full"></span>
+                                <span class="w-2 h-2 rounded-full bg-cyber-blue/60"></span>
+                            </div>
+                        </div>
+
+                        <!-- Pantalla Interna Interactiva de la App "Comunidad UTC - Guerra de Robots" -->
+                        <div class="w-full h-full bg-[#060d1f] rounded-[34px] overflow-hidden flex flex-col justify-between relative border border-cyber-blue/20">
+                            
+                            <!-- Status Bar -->
+                            <div class="px-5 pt-7 pb-2 flex justify-between items-center text-[10px] font-tech text-slate-400 bg-cyber-darker/90">
+                                <span>UTC-NET 5G</span>
+                                <div class="flex items-center gap-1.5 text-cyber-blue">
+                                    <i class="fa-solid fa-wifi"></i>
+                                    <i class="fa-solid fa-battery-full"></i>
+                                </div>
+                            </div>
+
+                            <!-- Header App -->
+                            <div class="px-4 py-3 bg-gradient-to-r from-cyber-dark via-[#0b1b3d] to-cyber-dark border-b border-cyber-blue/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-md bg-cyber-blue/20 border border-cyber-blue flex items-center justify-center text-cyber-blue">
+                                        <i class="fa-solid fa-robot text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-cyber text-[11px] font-bold text-white leading-tight">Comunidad UTC</div>
+                                        <div class="font-tech text-[10px] text-cyber-blue leading-tight">Guerra de Robots</div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded bg-cyber-green/20 text-cyber-green border border-cyber-green/40 font-tech text-[9px] font-bold">
+                                    ● EN VIVO
+                                </span>
+                            </div>
+
+                            <!-- Contenido Dinámico de la Pantalla (Cambia con las pestañas inferiores) -->
+                            <div id="phone-screen-content" class="flex-1 p-3.5 overflow-y-auto space-y-3">
+                                <!-- Vista 1: Inicio / Combates (Por defecto) -->
+                                <div class="rounded-xl bg-gradient-to-br from-cyber-electric/30 to-cyber-dark border border-cyber-blue/40 p-3 relative overflow-hidden">
+                                    <div class="text-[9px] font-tech text-cyber-blue uppercase tracking-wider font-bold">Próximo Encuentro • Arena A</div>
+                                    <div class="font-cyber text-xs font-bold text-white mt-1">FINAL COMBATE 3 LBS</div>
+                                    <div class="flex items-center justify-between mt-3 bg-cyber-darker/70 p-2 rounded-lg border border-slate-800">
+                                        <div class="text-center">
+                                            <div class="w-8 h-8 mx-auto rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xs font-bold">CYB</div>
+                                            <div class="text-[10px] font-tech text-white mt-1">CyberTron</div>
+                                        </div>
+                                        <div class="font-cyber text-xs font-black text-cyber-pink animate-pulse">VS</div>
+                                        <div class="text-center">
+                                            <div class="w-8 h-8 mx-auto rounded-full bg-purple-500/20 border border-purple-400 flex items-center justify-center text-purple-300 text-xs font-bold">VLT</div>
+                                            <div class="text-[10px] font-tech text-white mt-1">VoltForce</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tarjeta de Acceso Rápido -->
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="bg-cyber-card p-2.5 rounded-xl border border-slate-800">
+                                        <i class="fa-solid fa-trophy text-yellow-400 text-sm mb-1"></i>
+                                        <div class="font-cyber text-[10px] text-white font-bold">Tabla Global</div>
+                                        <div class="font-tech text-[10px] text-slate-400">64 Equipos</div>
+                                    </div>
+                                    <div class="bg-cyber-card p-2.5 rounded-xl border border-slate-800">
+                                        <i class="fa-solid fa-calendar-check text-cyber-blue text-sm mb-1"></i>
+                                        <div class="font-cyber text-[10px] text-white font-bold">Horarios</div>
+                                        <div class="font-tech text-[10px] text-slate-400">3 Arenas UTC</div>
+                                    </div>
+                                </div>
+
+                                <!-- Feed Comunidad UTC -->
+                                <div class="bg-cyber-card/80 p-3 rounded-xl border border-cyber-blue/20 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-cyber text-[10px] text-cyber-blue font-bold">AVISOS OFICIALES UTC</span>
+                                        <span class="text-[9px] text-slate-500">Hace 5m</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-300 leading-snug">
+                                        Pesaje oficial de robots categoría Combate abierto en el Laboratorio de Mecatrónica.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Navegación Inferior Interactiva del Smartphone -->
+                            <div class="bg-cyber-darker border-t border-cyber-blue/30 px-2 py-2.5 grid grid-cols-3 gap-1 text-center">
+                                <button onclick="switchPhoneTab('arena')" id="tab-arena" class="phone-tab active flex flex-col items-center justify-center py-1 rounded-lg bg-cyber-blue/20 text-cyber-blue transition-colors">
+                                    <i class="fa-solid fa-gamepad text-xs"></i>
+                                    <span class="font-tech text-[10px] font-bold mt-0.5">Arena</span>
+                                </button>
+                                <button onclick="switchPhoneTab('ranking')" id="tab-ranking" class="phone-tab flex flex-col items-center justify-center py-1 rounded-lg text-slate-400 hover:text-cyber-blue transition-colors">
+                                    <i class="fa-solid fa-ranking-star text-xs"></i>
+                                    <span class="font-tech text-[10px] font-bold mt-0.5">Ranking</span>
+                                </button>
+                                <button onclick="switchPhoneTab('comunidad')" id="tab-comunidad" class="phone-tab flex flex-col items-center justify-center py-1 rounded-lg text-slate-400 hover:text-cyber-blue transition-colors">
+                                    <i class="fa-solid fa-users text-xs"></i>
+                                    <span class="font-tech text-[10px] font-bold mt-0.5">Comunidad</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs font-tech text-cyan-400/80 mt-4 tracking-wider uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-hand-pointer"></i> Toca las pestañas del teléfono para interactuar con la app
+                    </p>
+                </div>
+
+                <!-- Columna Derecha: Características de la App -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-block px-3 py-1 rounded bg-cyber-purple/20 border border-cyber-purple/50 text-purple-300 font-tech font-bold text-xs tracking-widest uppercase">
+                        ECOSISTEMA DIGITAL UTC
+                    </div>
+                    <h2 class="font-cyber font-bold text-3xl sm:text-4xl text-white leading-tight">
+                        APP OFICIAL: <span class="text-cyber-blue">COMUNIDAD UTC</span> GUERRA DE ROBOTS
+                    </h2>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                        Diseñada exclusivamente para competidores, jueces y espectadores del torneo. Lleva el control completo del evento en la palma de tu mano con actualizaciones instantáneas desde cada arena.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+                        <!-- Feature 1 -->
+                        <div class="bg-cyber-card/70 border border-cyber-blue/20 p-5 rounded-xl hover:border-cyber-blue/60 transition-colors">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-9 h-9 rounded-lg bg-cyber-blue/15 text-cyber-blue flex items-center justify-center">
+                                    <i class="fa-solid fa-satellite-dish"></i>
+                                </div>
+                                <h4 class="font-cyber font-bold text-white text-sm">Brackets en Tiempo Real</h4>
+                            </div>
+                            <p class="text-slate-400 text-xs leading-relaxed">
+                                Consulta llaves de eliminación, turnos de pelea y resultados oficiales al segundo en que finaliza cada encuentro.
+                            </p>
+                        </div>
+
+                        <!-- Feature 2 -->
+                        <div class="bg-cyber-card/70 border border-cyber-blue/20 p-5 rounded-xl hover:border-cyber-blue/60 transition-colors">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-9 h-9 rounded-lg bg-cyber-blue/15 text-cyber-blue flex items-center justify-center">
+                                    <i class="fa-solid fa-bell"></i>
+                                </div>
+                                <h4 class="font-cyber font-bold text-white text-sm">Alertas de Llamado a Arena</h4>
+                            </div>
+                            <p class="text-slate-400 text-xs leading-relaxed">
+                                Recibe notificaciones push cuando tu equipo esté próximo a pasar a zona de pesaje o inicio de combate.
+                            </p>
+                        </div>
+
+                        <!-- Feature 3 -->
+                        <div class="bg-cyber-card/70 border border-cyber-blue/20 p-5 rounded-xl hover:border-cyber-blue/60 transition-colors">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-9 h-9 rounded-lg bg-cyber-blue/15 text-cyber-blue flex items-center justify-center">
+                                    <i class="fa-solid fa-comments"></i>
+                                </div>
+                                <h4 class="font-cyber font-bold text-white text-sm">Red Comunidad UTC</h4>
+                            </div>
+                            <p class="text-slate-400 text-xs leading-relaxed">
+                                Conecta con otros desarrolladores, comparte telemetría, fotos de tus prototipos y vota por el robot favorito del público.
+                            </p>
+                        </div>
+
+                        <!-- Feature 4 -->
+                        <div class="bg-cyber-card/70 border border-cyber-blue/20 p-5 rounded-xl hover:border-cyber-blue/60 transition-colors">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-9 h-9 rounded-lg bg-cyber-blue/15 text-cyber-blue flex items-center justify-center">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <h4 class="font-cyber font-bold text-white text-sm">Reglamento Técnico</h4>
+                            </div>
+                            <p class="text-slate-400 text-xs leading-relaxed">
+                                Acceso offline a dimensiones máximas, voltajes permitidos, seguridad de baterías LiPo y criterios de puntuación.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DESTACADA DE DESCARGA DIRECTA DE APK -->
+    <section id="descarga" class="py-20 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="cyber-cut bg-gradient-to-r from-[#07132b] via-[#0c2147] to-[#07132b] border-2 border-cyber-blue p-8 sm:p-12 relative overflow-hidden shadow-[0_0_60px_rgba(0,243,255,0.2)]">
+                
+                <!-- Decoración de esquinas -->
+                <div class="absolute top-0 right-0 w-40 h-40 bg-cyber-blue/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+                    <div class="md:col-span-7 space-y-4 text-center md:text-left">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-cyber-green/15 border border-cyber-green/40 text-cyber-green font-tech text-xs font-bold tracking-widest uppercase">
+                            <i class="fa-solid fa-shield-check"></i> ARCHIVO VERIFICADO • ANDROID OS
+                        </div>
+                        <h2 class="font-cyber font-black text-3xl sm:text-4xl text-white">
+                            DESCARGA DIRECTA <span class="text-cyber-blue">APK</span>
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Instala ahora la aplicación oficial <strong>Comunidad UTC - Guerra de Robots</strong> en tu dispositivo Android y prepárate para el regreso del torneo a casa.
+                        </p>
+                        
+                        <!-- Metadatos del archivo APK -->
+                        <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-2 font-tech text-sm text-cyan-200">
+                            <span class="bg-cyber-dark/80 px-3 py-1.5 rounded border border-cyber-blue/30">
+                                <i class="fa-solid fa-file-code text-cyber-blue mr-1.5"></i> guerra-robots-utc.apk
+                            </span>
+                            <span class="bg-cyber-dark/80 px-3 py-1.5 rounded border border-cyber-blue/30">
+                                <i class="fa-solid fa-code-branch text-cyber-blue mr-1.5"></i> v2.4.0 (2026)
+                            </span>
+                            <span class="bg-cyber-dark/80 px-3 py-1.5 rounded border border-cyber-blue/30">
+                                <i class="fa-solid fa-hard-drive text-cyber-blue mr-1.5"></i> 24.8 MB
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-5 flex flex-col items-center justify-center space-y-4">
+                        <!-- Botón Futurista Principal de Descarga APK -->
+                        <button id="download-apk-btn" onclick="triggerApkDownload()" class="w-full cyber-btn bg-gradient-to-r from-cyber-blue via-cyan-400 to-cyber-electric text-cyber-dark font-cyber font-black text-base sm:text-lg py-5 px-6 flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(0,243,255,0.6)] hover:brightness-110 active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-download text-2xl animate-bounce"></i>
+                            <div class="text-left">
+                                <span class="block leading-none">DESCARGAR APK</span>
+                                <span class="font-tech text-xs font-bold tracking-wider opacity-80">guerra-robots-utc.apk</span>
+                            </div>
+                        </button>
+
+                        <!-- Barra de progreso de descarga simulada (oculta inicialmente) -->
+                        <div id="download-progress-container" class="hidden w-full bg-cyber-dark/90 p-3 rounded-lg border border-cyber-blue/40">
+                            <div class="flex justify-between text-xs font-tech text-cyber-blue mb-1">
+                                <span id="download-status-text">Iniciando transferencia...</span>
+                                <span id="download-percent">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div id="download-bar" class="bg-gradient-to-r from-cyber-blue to-cyber-green h-full w-0 transition-all duration-200"></div>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 text-center">
+                            Requiere Android 8.0 o superior. Habilita <em>"Instalar aplicaciones de origen desconocido"</em> si tu sistema lo solicita.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notificación Toast Personalizada (Sin usar alert()) -->
+    <div id="cyber-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none max-w-sm w-full px-4">
+        <div class="bg-cyber-dark border-l-4 border-cyber-blue text-white p-4 rounded-r-xl shadow-[0_0_25px_rgba(0,243,255,0.4)] flex items-start gap-3">
+            <i class="fa-solid fa-circle-check text-cyber-green text-xl mt-0.5"></i>
+            <div>
+                <h5 class="font-cyber text-xs font-bold text-cyber-blue">DESCARGA INICIADA</h5>
+                <p class="text-xs text-slate-300 mt-1">El paquete <strong>guerra-robots-utc.apk</strong> se está descargando en tu dispositivo.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER FUTURISTA -->
+    <footer class="bg-cyber-darker border-t border-cyber-blue/20 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-robot text-cyber-blue text-2xl"></i>
+                    <div>
+                        <span class="font-cyber font-bold text-white tracking-wider block">GUERRA DE ROBOTS - UTC</span>
+                        <span class="font-tech text-xs text-slate-400 tracking-widest">EL TORNEO REGRESA A CASA</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-6 text-slate-400">
+                    <a href="#inicio" class="hover:text-cyber-blue transition-colors text-sm font-tech uppercase">Inicio</a>
+                    <a href="#categorias" class="hover:text-cyber-blue transition-colors text-sm font-tech uppercase">Categorías</a>
+                    <a href="#app-movil" class="hover:text-cyber-blue transition-colors text-sm font-tech uppercase">App Móvil</a>
+                    <a href="#descarga" class="hover:text-cyber-blue transition-colors text-sm font-tech uppercase">Descargar APK</a>
+                </div>
+
+                <div class="text-xs text-slate-500 font-tech">
+                    &copy; 2026 Comunidad Tecnológica UTC. Todos los derechos reservados.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lógica Interactiva en JavaScript -->
+    <script>
+        // 1. Toggle del Menú Móvil
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Cerrar menú móvil al hacer clic en un enlace
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // 2. Interactividad del Mockup de Smartphone ("Comunidad UTC - Guerra de Robots")
+        const screenContent = document.getElementById('phone-screen-content');
+        const tabViews = {
+            arena: `
+                <div class="rounded-xl bg-gradient-to-br from-cyber-electric/30 to-cyber-dark border border-cyber-blue/40 p-3 relative overflow-hidden">
+                    <div class="text-[9px] font-tech text-cyber-blue uppercase tracking-wider font-bold">Próximo Encuentro • Arena A</div>
+                    <div class="font-cyber text-xs font-bold text-white mt-1">FINAL COMBATE 3 LBS</div>
+                    <div class="flex items-center justify-between mt-3 bg-cyber-darker/70 p-2 rounded-lg border border-slate-800">
+                        <div class="text-center">
+                            <div class="w-8 h-8 mx-auto rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 text-xs font-bold">CYB</div>
+                            <div class="text-[10px] font-tech text-white mt-1">CyberTron</div>
+                        </div>
+                        <div class="font-cyber text-xs font-black text-cyber-pink animate-pulse">VS</div>
+                        <div class="text-center">
+                            <div class="w-8 h-8 mx-auto rounded-full bg-purple-500/20 border border-purple-400 flex items-center justify-center text-purple-300 text-xs font-bold">VLT</div>
+                            <div class="text-[10px] font-tech text-white mt-1">VoltForce</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-cyber-card p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-trophy text-yellow-400 text-sm mb-1"></i>
+                        <div class="font-cyber text-[10px] text-white font-bold">Tabla Global</div>
+                        <div class="font-tech text-[10px] text-slate-400">64 Equipos</div>
+                    </div>
+                    <div class="bg-cyber-card p-2.5 rounded-xl border border-slate-800">
+                        <i class="fa-solid fa-calendar-check text-cyber-blue text-sm mb-1"></i>
+                        <div class="font-cyber text-[10px] text-white font-bold">Horarios</div>
+                        <div class="font-tech text-[10px] text-slate-400">3 Arenas UTC</div>
+                    </div>
+                </div>
+                <div class="bg-cyber-card/80 p-3 rounded-xl border border-cyber-blue/20 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-cyber text-[10px] text-cyber-blue font-bold">AVISOS OFICIALES UTC</span>
+                        <span class="text-[9px] text-slate-500">Hace 5m</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-snug">
+                        Pesaje oficial de robots categoría Combate abierto en el Laboratorio de Mecatrónica.
+                    </p>
+                </div>
+            `,
+            ranking: `
+                <div class="font-cyber text-xs font-bold text-cyber-blue mb-2">TOP EQUIPOS • GENERAL</div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between bg-cyber-card p-2.5 rounded-lg border border-yellow-500/40">
+                        <div class="flex items-center gap-2">
+                            <span class="font-cyber text-xs font-bold text-yellow-400">#1</span>
+                            <div>
+                                <div class="font-cyber text-[11px] text-white">CyberTron UTC</div>
+                                <div class="font-tech text-[9px] text-slate-400">Combate • 320 pts</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-crown text-yellow-400 text-xs"></i>
+                    </div>
+                    <div class="flex items-center justify-between bg-cyber-card p-2.5 rounded-lg border border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span class="font-cyber text-xs font-bold text-slate-300">#2</span>
+                            <div>
+                                <div class="font-cyber text-[11px] text-white">MazeRunner X</div>
+                                <div class="font-tech text-[9px] text-slate-400">Laberinto • 00:14.2s</div>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-tech text-cyber-green">+2</span>
+                    </div>
+                    <div class="flex items-center justify-between bg-cyber-card p-2.5 rounded-lg border border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <span class="font-cyber text-xs font-bold text-amber-600">#3</span>
+                            <div>
+                                <div class="font-cyber text-[11px] text-white">StrikerBots</div>
+                                <div class="font-tech text-[9px] text-slate-400">Fútbol • 18 Goles</div>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-tech text-cyber-blue">●</span>
+                    </div>
+                </div>
+            `,
+            comunidad: `
+                <div class="font-cyber text-xs font-bold text-cyber-blue mb-2">MURO COMUNIDAD UTC</div>
+                <div class="space-y-2.5">
+                    <div class="bg-cyber-card p-2.5 rounded-xl border border-cyber-blue/20">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-5 h-5 rounded-full bg-cyber-blue text-cyber-dark flex items-center justify-center text-[9px] font-bold">M</div>
+                            <span class="font-tech text-xs font-bold text-white">Mecatrónica 8A</span>
+                        </div>
+                        <p class="text-[10px] text-slate-300">¡Listos para defender la casa en la categoría de Laberintos! 🚀🤖</p>
+                        <div class="flex gap-3 mt-1.5 text-[9px] text-cyber-blue font-tech">
+                            <span><i class="fa-solid fa-heart"></i> 42</span>
+                            <span><i class="fa-solid fa-comment"></i> 9</span>
+                        </div>
+                    </div>
+                    <div class="bg-cyber-card p-2.5 rounded-xl border border-cyber-blue/20">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-[9px] font-bold">S</div>
+                            <span class="font-tech text-xs font-bold text-white">Staff Torneo UTC</span>
+                        </div>
+                        <p class="text-[10px] text-slate-300">Recuerden tener cargada la app para escanear su QR de acceso a pits.</p>
+                    </div>
+                </div>
+            `
+        };
+
+        function switchPhoneTab(tabName) {
+            // Actualizar contenido de pantalla
+            screenContent.innerHTML = tabViews[tabName];
+
+            // Actualizar estilos de botones
+            document.querySelectorAll('.phone-tab').forEach(btn => {
+                btn.classList.remove('bg-cyber-blue/20', 'text-cyber-blue');
+                btn.classList.add('text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.remove('text-slate-400');
+            activeBtn.classList.add('bg-cyber-blue/20', 'text-cyber-blue');
+        }
+
+        // 3. Descarga Directa del archivo guerra-robots-utc.apk con feedback visual
+        function triggerApkDownload() {
+            const progressContainer = document.getElementById('download-progress-container');
+            const downloadBar = document.getElementById('download-bar');
+            const downloadPercent = document.getElementById('download-percent');
+            const downloadStatusText = document.getElementById('download-status-text');
+            const toast = document.getElementById('cyber-toast');
+
+            progressContainer.classList.remove('hidden');
+            let progress = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 25) + 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    downloadStatusText.textContent = '¡Descarga completada!';
+                    
+                    // Generar descarga real de archivo contenedor para experiencia funcional
+                    const apkBlob = new Blob(
+                        ['PK\x03\x04 - Paquete Oficial Comunidad UTC: Guerra de Robots (guerra-robots-utc.apk)'],
+                        { type: 'application/vnd.android.package-archive' }
+                    );
+                    const url = URL.createObjectURL(apkBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'guerra-robots-utc.apk';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Mostrar notificación Toast
+                    toast.classList.remove('translate-y-24', 'opacity-0');
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-24', 'opacity-0');
+                    }, 4500);
+                }
+                downloadBar.style.width = `${progress}%`;
+                downloadPercent.textContent = `${progress}%`;
+            }, 180);
+        }
+    </script>
+</body>
+</html>
